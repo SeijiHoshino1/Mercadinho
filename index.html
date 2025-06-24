@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Mercadinho Digital</title>
+</head>
+<body>
+    <div class="container">
+        <div class="header" id="header" style="display: none;">
+            <div class="logo">🛒 Mercadinho Digital</div>
+            <div class="user-info">
+                <span id="username"></span>
+                <button class="btn" onclick="showCart()">
+                    Carrinho
+                    <span class="cart-counter" id="cartCounter">0</span>
+                </button>
+                <button class="btn btn-secondary" onclick="logout()">Sair</button>
+            </div>
+        </div>
+
+        <div class="screen active" id="loginScreen">
+            <div class="login-form">
+                <h2>🛒 Mercadinho Digital</h2>
+                <p style="margin-bottom: 30px; color: #666;">Faça login para acessar o catálogo</p>
+                
+                <div id="loginError" class="error-message" style="display: none;"></div>
+                <div class="form-group">
+                    <label for="username">Usuário:</label>
+                    <input type="text" id="username-input" placeholder="Digite seu usuário" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Senha:</label>
+                    <input type="password" id="password-input" placeholder="Digite sua senha" required>
+                </div>
+                
+                <button class="btn" onclick="login()">Entrar</button>
+                <button class="btn btn-secondary" onclick="alternarCrudUsuarios()" style="margin-top:10px;">Gerenciar Usuários</button>
+                <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <p><strong>Usuários de teste:</strong></p>
+                    <p id="listaUsuariosCrud">admin/123 | user1/123 | user2/123</p>
+                </div>
+            </div>
+            <div id="painelCrudUsuarios" style="display:none; margin:30px auto 0; max-width:400px; background:#fff; border-radius:10px; box-shadow:0 2px 8px #0001; padding:20px;">
+                <h3 style="margin-bottom:15px;">CRUD de Usuários</h3>
+                <div class="form-group">
+                    <input type="text" id="novoUsuario" placeholder="Novo usuário">
+                    <input type="password" id="novaSenha" placeholder="Senha">
+                    <button class="btn" onclick="adicionarUsuario()">Adicionar</button>
+                </div>
+                <ul id="listaCrudUsuarios" style="list-style:none; padding:0;"></ul>
+            </div>
+        </div>
+
+        <div class="screen" id="productsScreen">
+            <h2 style="margin-bottom: 20px; text-align: center; color: #333;">Catálogo de Produtos</h2>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Carregando produtos...</p>
+            </div>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+
+        <div class="screen" id="cartScreen">
+            <h2 style="margin-bottom: 20px; text-align: center; color: #333;">Carrinho de Compras</h2>
+            <div id="cartItems"></div>
+            <div id="cartTotal" class="cart-total" style="display: none;">
+                <h3>Total da Compra</h3>
+                <div class="total-amount" id="totalAmount">R$ 0,00</div>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="showProducts()">Continuar Comprando</button>
+                <button class="btn" onclick="showCheckout()" id="checkoutBtn" style="display: none;">Finalizar Compra</button>
+            </div>
+        </div>
+
+        <div class="screen" id="checkoutScreen">
+            <h2 style="margin-bottom: 30px; text-align: center; color: #333;">Finalizar Compra</h2>
+            
+            <div class="checkout-form">
+                <h3 style="margin-bottom: 20px;">Informações de Entrega</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nome Completo:</label>
+                        <input type="text" id="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone:</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Endereço Completo:</label>
+                    <input type="text" id="address" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cidade:</label>
+                        <input type="text" id="city" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CEP:</label>
+                        <input type="text" id="zipCode" required>
+                    </div>
+                </div>
+
+                <h3 style="margin: 30px 0 20px;">Método de Pagamento</h3>
+                <div class="payment-methods">
+                    <div class="payment-method" onclick="selectPayment('credit')">
+                        💳 Cartão de Crédito
+                    </div>
+                    <div class="payment-method" onclick="selectPayment('debit')">
+                        💳 Cartão de Débito
+                    </div>
+                    <div class="payment-method" onclick="selectPayment('pix')">
+                        📱 PIX
+                    </div>
+                    <div class="payment-method" onclick="selectPayment('cash')">
+                        💵 Dinheiro
+                    </div>
+                </div>
+
+                <div id="cartSummary" class="cart-total">
+                    <h3>Resumo do Pedido</h3>
+                    <div class="total-amount" id="checkoutTotal">R$ 0,00</div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="showCart()">Voltar ao Carrinho</button>
+                    <button class="btn" onclick="finalizePurchase()">Confirmar Pedido</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="screen" id="successScreen">
+            <div class="success-message">
+                <h2>✅ Pedido Confirmado!</h2>
+                <p>Seu pedido foi realizado com sucesso!</p>
+                <p style="margin: 20px 0;">Número do pedido: <strong id="orderNumber"></strong></p>
+                <p>Em breve você receberá mais informações por email.</p>
+                <button class="btn" onclick="startNewOrder()" style="margin-top: 30px;">Nova Compra</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+</body>
+</html>
